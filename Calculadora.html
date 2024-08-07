@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Calculadora Fuchs</title>
+
+<link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/128/5379/5379568.png">
+<style type="text/css">
+	@import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,700");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Montserrat, sans-serif;
+  user-select: none;
+  outline: none;
+  border: none;
+}
+body {
+  height: 100vh;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background: rgb(2,0,36);
+background: linear-gradient(180deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%);
+}
+#form {
+  max-width: 280px;
+  display: grid;
+  padding: 10px;
+  border-radius: 7px;
+  gap: 5px;
+  font-size: 0.9em;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+select {
+  font-weight: 700;
+}
+input,
+select,
+button {
+  padding: 7px;
+}
+button,
+input[type="reset"] {
+  font-weight: 700;
+}
+label, h2{
+  color:white;
+}
+#form:has(#fator:disabled) > label[for="fator"] {
+  color: gray;
+}
+#calcular {
+  background: rgba(3, 255, 145, 0.37);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+#display {
+  height: 100px;
+  background-color: #fff;
+  font-size: 0.9em;
+  font-weight: 700;
+  padding: 5px;
+}
+
+</style>
+</head>
+<body>
+
+<form id="form" name="form">
+  <h2>Calculadora de Fuchs</h2>
+  <!--    -->
+  <label for="contouTodosCampos">Contou todos os campos?</label>
+  <select name="contouTodosCampos" id="contouTodosCampos">
+    <option value="Sim">Sim</option>
+    <option value="Não">Não</option>
+  </select>
+  <!--    -->
+  <label for="diluicao">Houve diluição?</label>
+  <select name="diluicao" id="diluicao">
+    <option value="Sim">Sim</option>
+    <option value="Não">Não</option>
+  </select>
+<!--    -->
+  <label for="fator">Qual o fator da diluição?</label>
+  <input type="number" id="fator" name="fator" value="1" min="1">
+  <!--    -->
+  <label for="quantidadeCelulas">Quantidade de células:</label>
+  <input type="number" id="quantidadeCelulas" name="quantidadeCelulas" value="1" min="1">
+  <button id="calcular" name="calcular">Calcular</button>
+  <input type="reset">
+  <div id="display" name="display"></div>
+</form>
+<script type="text/javascript">
+	const form = document.form;
+const camaras = 256;
+const divisor = 3.2;
+form.addEventListener("submit", (e) => e.preventDefault());
+form.diluicao.addEventListener('change', ()=>{
+  if (houveDiluicao() === "Sim") {
+    document.querySelector("#fator").disabled = false;
+  } else if (houveDiluicao() === "Não") {
+    document.querySelector("#fator").disabled = true;
+  }
+});
+form.calcular.addEventListener('click',calcular);
+
+function houveDiluicao() {
+  const campo = form.diluicao;
+  return campo.value;
+}
+function campoUnico(celulas, fator) {
+  celulas = celulas * fator;
+  celulas = celulas * camaras;
+  celulas = celulas / divisor;
+  return celulas;
+}
+function todosCampos(celulas, fator) {
+  celulas = celulas * fator;
+  return celulas / divisor;
+}
+function calcular(){
+  let campos = form.contouTodosCampos.value;
+  let diluicao = form.diluicao.value;
+  let fator = parseInt(form.fator.value);
+  let quantCelulas = parseInt(form.quantidadeCelulas.value);
+  const display = document.querySelector('#display');
+  let resultado = 0;
+  if(campos==='Sim'){
+    resultado = todosCampos(quantCelulas, fator);
+  }else if(campos === 'Não'){
+    resultado = campoUnico(quantCelulas, fator);
+  }
+  display.innerHTML = `
+    Número de Campos: ${campos=='Sim'?256:1}<br/>
+    Diluiu?: ${diluicao}<br/>
+    Fator diluição: 1/${fator}<br/>
+    Número de células: ${quantCelulas}<br/>
+    Resultado: ${resultado}
+  `;
+  
+}
+</script>
+</body>
+</html>
